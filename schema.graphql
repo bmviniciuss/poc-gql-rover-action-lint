@@ -1,0 +1,9 @@
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy on SCALAR
+type Book {
+  title: String
+  author: String
+}
+type Query {
+  books: [Book]
+}
