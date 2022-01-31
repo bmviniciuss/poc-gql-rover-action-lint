@@ -1,0 +1,34 @@
+name: GraphQL Lint
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  graphql-lint:
+    runs-on: ubuntu-latest
+    env:
+      APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Install Rover
+        run: |
+          curl -sSL https://rover.apollo.dev/nix/v0.1.0 | sh
+
+          # Add Rover to the $GITHUB_PATH so it can be used in another step
+          # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
+          echo "$HOME/.rover/bin" >> $GITHUB_PATH
+     
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch schema
+        run: npm run gql:schema:download
+
+      - name: Run lint
+        run: npm run lint:gql
